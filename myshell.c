@@ -24,12 +24,15 @@ int main (int argc, char ** argv)
 			/* last entry will be NULL */									
 			if (args[0]) {                     /* if there's anything there */
 				/* check for internal/external command */
-				if (!strcmp(args[0],"clear")) { /*  "clear" command */
+				if (!strcmp(args[0],"clr")) { /*  "clear" command */
                     system("clear");
                     continue;
                 }
                 if (!strcmp(args[0],"quit"))   /*  "quit" command */
                     break;                     /*  break out of 'while' loop */
+                if (!strcmp(args[0],"dir")){/*TODO: implment dir */
+					system("ls -al");
+				}
 				/* else pass command onto OS (or in this instance, print them out) */
                 arg = args;
                 while (*arg) fprintf(stdout,"%s ",*arg++);
