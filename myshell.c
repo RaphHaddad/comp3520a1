@@ -54,11 +54,13 @@ int main (int argc, char ** argv)
 				}
 				if (!strcmp(args[0],"echo")) {
 						int i= 1;
-						int lengthStr = 1;/* the word 'echo' is 4 characters with a space it is 5 */
+						int lengthStr = 1;/* starting at one because of trailing \n */
 						while (args[i]){
 							lengthStr = strlen(args[i])+ lengthStr + 1;/*plus 1 for the spaces */
 							i = i + 1;
 						}
+						char *str;
+						str = malloc(lengthStr);
 						printf("%i",lengthStr);
 				}
 			
