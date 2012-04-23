@@ -54,14 +54,20 @@ int main (int argc, char ** argv)
 				}
 				if (!strcmp(args[0],"echo")) {
 						int i= 1;
+						char * str;
 						int lengthStr = 1;/* starting at one because of trailing \n */
-						while (args[i]){
+						while (args[i]){/*loop to get the length of string to malloc */
 							lengthStr = strlen(args[i])+ lengthStr + 1;/*plus 1 for the spaces */
 							i = i + 1;
 						}
-						char *str;
 						str = malloc(lengthStr);
-						printf("%i",lengthStr);
+						i = 1; /* reseting counter to actually concat to variable str */
+						while (args[i]){
+							strcat(str,args[i]);
+							strcat(str," ");
+							i = i +1;
+						}
+						printf("%s",str);
 				}
 			
 			
