@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <regex.h>
 #define MAX_BUFFER 1024                        /* max line buffer */
 #define MAX_ARGS 64                            /* max # args */
 #define SEPARATORS " \t\n"                     /* token sparators */
@@ -59,7 +60,13 @@ int main (int argc, char ** argv)
 						while (args[i]){/*loop to get the number of arguments */
 							i = i + 1;
 						}
-					printf("%s",args[i]);
+						int j= 0;
+						while (args[i-1][j]){
+/*	printf("%c",args[i][j]);*/
+							printf("looped");
+							j = j + 1;
+						}
+					/* printf("%s",args[i]); */
 				}
 			
 			
