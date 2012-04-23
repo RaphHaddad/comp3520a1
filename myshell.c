@@ -56,7 +56,7 @@ int main (int argc, char ** argv)
 						int i= 1;
 						int lengthStr = 5;/* the word 'echo' is 4 characters with a space it is 5 */
 						while (args[i]){
-							lengthStr = strlen(args[i])+ lengthStr;
+							lengthStr = strlen(args[i])+ lengthStr + 1;/*plus 1 for the spaces */
 							i = i + 1;
 						}
 						printf("%i",lengthStr);
@@ -73,6 +73,5 @@ int main (int argc, char ** argv)
         }
 
     }
-
     return 0; 
 }
