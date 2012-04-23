@@ -53,21 +53,22 @@ int main (int argc, char ** argv)
 					while (*env) printf("%s\n",*env++);
 				}
 				if (!strcmp(args[0],"echo")) {
-						int i= 1;
+						int i= 0;
 						char * str;
 						int lengthStr = 1;/* starting at one because of trailing \n */
 						while (args[i]){/*loop to get the length of string to malloc */
 							lengthStr = strlen(args[i])+ lengthStr + 1;/*plus 1 for the spaces */
 							i = i + 1;
+							printf("%s\n",args[i]);
 						}
 						str = malloc(lengthStr);
-						i = 1; /* reseting counter to actually concat to variable str */
-						while (args[i]){
-							strcat(str,args[i]);
+						int j = 0; /* reseting counter to actually concat to variable str */
+						while (j < (i-1)){/*the reason the new counter has to be less than i-1 is because the last arg is all args contatinated */
 							strcat(str," ");
-							i = i +1;
+							strcat(str,args[j]);
+							j = j +1;
 						}
-						printf("%s",str);
+					printf("--%s",str);
 				}
 			
 			
