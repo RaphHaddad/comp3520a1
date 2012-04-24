@@ -54,11 +54,16 @@ int main (int argc, char ** argv)
 					while (*env) printf("%s\n",*env++);
 				}
 				if (!strcmp(args[0],"echo")) {
+<<<<<<< HEAD
 						int i= 0;/*Count of the number of arguments*/
+=======
+						int i= 0;
+>>>>>>> parent of cb249f1... UP TO HERE FOR ECHO WITHOUT REGEX
 						char * str;
 						int lengthStr = 1;/* starting at one because of trailing \n */
 						while (args[i]){/*loop to get the number of arguments */
 							i = i + 1;
+<<<<<<< HEAD
 						}
 						int j= 0;
 						while (args[i-1][j]){
@@ -67,6 +72,18 @@ int main (int argc, char ** argv)
 							j = j + 1;
 						}
 					/* printf("%s",args[i]); */
+=======
+							printf("%s\n",args[i]);
+						}
+						str = malloc(lengthStr);
+						int j = 0; /* reseting counter to actually concat to variable str */
+						while (j < (i-1)){/*the reason the new counter has to be less than i-1 is because the last arg is all args contatinated */
+							strcat(str," ");
+							strcat(str,args[j]);
+							j = j +1;
+						}
+					printf("--%s",str);
+>>>>>>> parent of cb249f1... UP TO HERE FOR ECHO WITHOUT REGEX
 				}
 			
 			
