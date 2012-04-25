@@ -31,9 +31,9 @@ void forking_new_command(char **args) {
 			syserr("fork");
 		case 0:
 			pid = getpid();
-			execvp(args[0],args);
+			/* execvp(args[0],args); */
+			execvp("ls","-al",".");
 			syserr("exec");
-			return;
 	}
 }
 
@@ -62,7 +62,8 @@ int main (int argc, char ** argv)
                 }
                 if (!strcmp(args[0],"quit"))   /*  "quit" command */
                     break;                     /*  break out of 'while' loop */
-                /*********DIR ***************/
+               
+               	/*********DIR ***************/
                 if (!strcmp(args[0],"dir")){/*TODO: implment dir */
 						if (args[1]) {/*if something after dir*/
 							/*char *str;
@@ -72,7 +73,7 @@ int main (int argc, char ** argv)
 							strcat(str,args[1]);
 							printf("The Command: %s");*/
 	
-							char * args_to_pass[] = {"ls","-al",args[1],NULL};
+							char * args_to_pass[] = {"ls","-al",args[1]};
 							forking_new_command(args_to_pass);
 							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
