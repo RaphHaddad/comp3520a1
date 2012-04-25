@@ -68,7 +68,7 @@ int main (int argc, char ** argv)
 							strcat(str," ");
 							i = i +1;
 						}
-					printf("%s",str);
+					printf("%s\n",str);
 				}
 			
 			
