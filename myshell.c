@@ -3,11 +3,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#includ <errno.h>
 #define MAX_BUFFER 1024                        /* max line buffer */
 #define MAX_ARGS 64                            /* max # args */
 #define SEPARATORS " \t\n"                     /* token sparators */
 
 extern char **environ;
+void syserr(char *msg); 
+extern int errno;
+
+void syserr(char * msg)   /* report error code and abort */
+{
+   fprintf(stderr,"%s: %s", strerror(errno), msg);
+   abort(errno);
+}
+
 
 
 
@@ -41,22 +51,20 @@ int main (int argc, char ** argv)
                 if (!strcmp(args[0],"dir")){/*TODO: implment dir */
                 	switch (fork()){
 						case -1:
-							syserr("fork");
+							/*syserr("fork");*/
 						case 0:
 							pid = getpid();
-							syserr("execl");
-
-					}
-                	if (args[1]) {/*if something after dir*/
-						char *ls = "ls -al ";
-						char *str;
-						str = malloc(strlen(ls) + strlen(args[1])+1);
-						strcat(str,ls);
-						strcat(str,args[1]);
-						system(str);
-						free(str);
-					} else {/* if no directory is selected assume it is current directory */
-						system("ls -al .");
+							if (args[1]) {/*if something after dir*/
+								char *ls = "ls -al ";
+								char *str;
+								str = malloc(strlen(ls) + strlen(args[1])+1);
+								strcat(str,ls);
+								strcat(str,args[1]);
+								system(str);
+								free(str);
+							} else {/* if no directory is selected assume it is current directory */
+								system("ls -al .");
+							}
 					}
 				}
 				if (!strcmp(args[0],"environ")){
@@ -95,3 +103,5 @@ int main (int argc, char ** argv)
     }
     return 0; 
 }
+
+
