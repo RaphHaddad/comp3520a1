@@ -30,9 +30,9 @@ void forking_new_command(char **args) {
 		case 0:
 			pid = getpid();
 			execvp(args[0],args);
-			syserr("execl");
+			syserr("exec");
+			return;
 	}
-	exit(0);
 }
 
 int main (int argc, char ** argv)
@@ -92,7 +92,7 @@ int main (int argc, char ** argv)
 					while (*env) printf("%s\n",*env++);
 				}
 				if (!strcmp(args[0],"echo")) {
-						int i= i;/*start count at one as the command echo doesn't need to be outputed*/
+						int i= 0;/*start count at zero as the command echo doesn't need to be outputed*/
 						char * str;
 						int lengthStr = 1;/* starting at one because of trailing \n */
 						while (args[i]){/*loop to get the length of string to malloc */
