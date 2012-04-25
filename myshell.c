@@ -14,6 +14,8 @@ void syserr(char *msg);
 extern int errno;
 void forking_new_command(char **args);
 
+
+
 void syserr(char * msg)   /* report error code and abort */
 {
    fprintf(stderr,"%s: %s", strerror(errno), msg);
