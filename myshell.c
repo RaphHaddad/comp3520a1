@@ -14,13 +14,12 @@
 
 pid_t waitpid(pid_t pid, int *stat_loc, int options);
 extern char **environ;
-void syserr(char *msg); 
-extern int errno;
+void syserr(const char *msg); 
 void forking_new_command(char **args);
 
 
 
-void syserr(char * msg)   /* report error code and abort */
+void syserr(const char * msg)   /* report error code and abort */
 {
    fprintf(stderr,"%s: %s", strerror(errno), msg);
    abort();
@@ -43,7 +42,7 @@ int main (int argc, char ** argv)
     char buf[MAX_BUFFER];                      /* line buffer */
     char * args[MAX_ARGS];                     /* pointers to arg strings */
     char ** arg;                               /* working pointer thru args */
-    char * prompt = "==>" ;                    /* shell prompt */
+    const char * prompt = "==>" ;                    /* shell prompt */
 /* keep reading input until "quit" command or eof of redirected input */
 
     while (!feof(stdin)) { 
@@ -87,7 +86,10 @@ int main (int argc, char ** argv)
 				/**************DIR ***********/
 
 				/*********CD ***************/
+				if (!strcmpr(args[0],"cd")) {
 
+
+				}
 
 				/**********CD ***********/
 
@@ -114,7 +116,13 @@ int main (int argc, char ** argv)
 						}
 					printf("%s\n",str);
 				}
+				
 
+				/**** anything else ***/
+				{
+					forking_newCommand(args);
+				}
+				/** anything else ***/
 			
 				/* else pass command onto OS (or in this instance, print them out) */
                 arg = args;
