@@ -5,10 +5,14 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #define MAX_BUFFER 1024                        /* max line buffer */
 #define MAX_ARGS 64                            /* max # args */
 #define SEPARATORS " \t\n"                     /* token sparators */
 
+pid_t waitpid(pid_t pid, int *stat_loc, int options);
 extern char **environ;
 void syserr(char *msg); 
 extern int errno;
@@ -24,7 +28,8 @@ void syserr(char * msg)   /* report error code and abort */
 
 
 void forking_new_command(char *args[]) {
-	switch (fork()) {
+	pid_t pid;
+	switch (pid = fork()) {
 		case -1:
 			syserr("fork");
 		case 0:
@@ -71,12 +76,13 @@ int main (int argc, char ** argv)
 	
 							char * args_to_pass[] = {"ls","-al",args[1],NULL};
 							forking_new_command(args_to_pass);
+							continue;
 							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
 							/*system("ls -al .");*/
 							/*forking_new_command("ls -al .");*/
 						}
-					
+						printf ("hi");	
 				}
 				/**************DIR ***********/
 
