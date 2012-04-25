@@ -23,16 +23,13 @@ void syserr(char * msg)   /* report error code and abort */
 }
 
 
-void forking_new_command(char **args) {
-	pid_t pid;
-	pid = getpid();
+void forking_new_command(char *args[]) {
 	switch (fork()) {
 		case -1:
 			syserr("fork");
 		case 0:
-			pid = getpid();
 			/* execvp(args[0],args); */
-			execvp("ls","-al",".");
+			execvp(args[0],args);
 			syserr("exec");
 	}
 }
