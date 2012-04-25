@@ -17,6 +17,8 @@ int main (int argc, char ** argv)
     char * args[MAX_ARGS];                     /* pointers to arg strings */
     char ** arg;                               /* working pointer thru args */
     char * prompt = "==>" ;                    /* shell prompt */
+    pid_t pid;
+    int rc;
 /* keep reading input until "quit" command or eof of redirected input */
 
     while (!feof(stdin)) { 
@@ -40,7 +42,9 @@ int main (int argc, char ** argv)
                 	switch (fork()){
 						case -1:
 							syserr("fork");
-
+						case 0:
+							pid = getpid();
+							syserr("execl");
 
 					}
                 	if (args[1]) {/*if something after dir*/
