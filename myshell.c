@@ -12,6 +12,7 @@
 extern char **environ;
 void syserr(char *msg); 
 extern int errno;
+void forking_new_command(char *command);
 
 void syserr(char * msg)   /* report error code and abort */
 {
@@ -20,14 +21,18 @@ void syserr(char * msg)   /* report error code and abort */
 }
 
 
-void forking_new_command(char *command) {
+void forking_new_command(char *command, char **args) {
+	printf("THE COMMAND: '%s'\n",command);
+	pid_t pid;
+	pid = getpid();
 	switch (fork()) {
 		case -1:
 			syserr("fork");
 		case 0:
-			execvp(command,NULL);
+			pid = getpid();
+			execlp(command,args,NULL);
+			syserr("execl");
 	}
-
 }
 
 int main (int argc, char ** argv)
@@ -57,27 +62,21 @@ int main (int argc, char ** argv)
                     break;                     /*  break out of 'while' loop */
                 /*********DIR ***************/
                 if (!strcmp(args[0],"dir")){/*TODO: implment dir */
-                	switch (fork()){
-						case -1:
-							syserr("fork");
-						case 0:
-							pid = getpid();
-							if (args[1]) {/*if something after dir*/
-								char *ls = "ls -al ";
-								char *str;
-								str = malloc(strlen(ls) + strlen(args[1])+1);
-								strcat(str,ls);
-								strcat(str,args[1]);
-								/*system(str);*/
-								execvp(str,NULL);
-								free(str);
-							} else {/* if no directory is selected assume it is current directory */
+						if (args[1]) {/*if something after dir*/
+							char[] ls = ["ls","-al"];
+							char *str;
+							str = malloc(strlen(ls) + strlen(args[1])+1);
+							strcat(str,ls);
+							strcat(str,args[1]);
+							/*system(str);*/
 
-								/*system("ls -al .");*/
-								execvp("ls -al .",NULL);
-							}
-							syserr("execl");
-					}
+							/*forking_new_command(str);*/	
+							free(str);
+						} else {/* if no directory is selected assume it is current directory */
+							/*system("ls -al .");*/
+							/*forking_new_command("ls -al .");*/
+						}
+					
 				}
 				/**************DIR ***********/
 
