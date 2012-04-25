@@ -28,7 +28,6 @@ void forking_new_command(char *args[]) {
 		case -1:
 			syserr("fork");
 		case 0:
-			/* execvp(args[0],args); */
 			execvp(args[0],args);
 			syserr("exec");
 	}
@@ -70,7 +69,7 @@ int main (int argc, char ** argv)
 							strcat(str,args[1]);
 							printf("The Command: %s");*/
 	
-							char * args_to_pass[] = {"ls","-al",args[1]};
+							char * args_to_pass[] = {"ls","-al",args[1],NULL};
 							forking_new_command(args_to_pass);
 							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
