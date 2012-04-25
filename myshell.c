@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#includ <errno.h>
+#include <errno.h>
+#include <unistd.h>
 #define MAX_BUFFER 1024                        /* max line buffer */
 #define MAX_ARGS 64                            /* max # args */
 #define SEPARATORS " \t\n"                     /* token sparators */
@@ -15,11 +16,19 @@ extern int errno;
 void syserr(char * msg)   /* report error code and abort */
 {
    fprintf(stderr,"%s: %s", strerror(errno), msg);
-   abort(errno);
+   abort();
 }
 
 
+void forking_new_command(char *command) {
+	switch (fork()) {
+		case -1:
+			syserr("fork");
+		case 0:
+			execvp(command,NULL);
+	}
 
+}
 
 int main (int argc, char ** argv)
 {
@@ -27,8 +36,6 @@ int main (int argc, char ** argv)
     char * args[MAX_ARGS];                     /* pointers to arg strings */
     char ** arg;                               /* working pointer thru args */
     char * prompt = "==>" ;                    /* shell prompt */
-    pid_t pid;
-    int rc;
 /* keep reading input until "quit" command or eof of redirected input */
 
     while (!feof(stdin)) { 
@@ -48,10 +55,11 @@ int main (int argc, char ** argv)
                 }
                 if (!strcmp(args[0],"quit"))   /*  "quit" command */
                     break;                     /*  break out of 'while' loop */
+                /*********DIR ***************/
                 if (!strcmp(args[0],"dir")){/*TODO: implment dir */
                 	switch (fork()){
 						case -1:
-							/*syserr("fork");*/
+							syserr("fork");
 						case 0:
 							pid = getpid();
 							if (args[1]) {/*if something after dir*/
@@ -60,13 +68,25 @@ int main (int argc, char ** argv)
 								str = malloc(strlen(ls) + strlen(args[1])+1);
 								strcat(str,ls);
 								strcat(str,args[1]);
-								system(str);
+								/*system(str);*/
+								execvp(str,NULL);
 								free(str);
 							} else {/* if no directory is selected assume it is current directory */
-								system("ls -al .");
+
+								/*system("ls -al .");*/
+								execvp("ls -al .",NULL);
 							}
+							syserr("execl");
 					}
 				}
+				/**************DIR ***********/
+
+				/*********CD ***************/
+
+
+				/**********CD ***********/
+
+
 				if (!strcmp(args[0],"environ")){
 					char ** env = environ;
 					while (*env) printf("%s\n",*env++);
