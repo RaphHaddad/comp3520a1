@@ -10,6 +10,7 @@
 extern char **environ;
 
 
+
 int main (int argc, char ** argv)
 {
     char buf[MAX_BUFFER];                      /* line buffer */
@@ -36,6 +37,12 @@ int main (int argc, char ** argv)
                 if (!strcmp(args[0],"quit"))   /*  "quit" command */
                     break;                     /*  break out of 'while' loop */
                 if (!strcmp(args[0],"dir")){/*TODO: implment dir */
+                	switch (fork()){
+						case -1:
+							syserr("fork");
+
+
+					}
                 	if (args[1]) {/*if something after dir*/
 						char *ls = "ls -al ";
 						char *str;
@@ -70,7 +77,7 @@ int main (int argc, char ** argv)
 						}
 					printf("%s\n",str);
 				}
-			
+
 			
 				/* else pass command onto OS (or in this instance, print them out) */
                 arg = args;
