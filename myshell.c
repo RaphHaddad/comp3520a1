@@ -12,7 +12,7 @@
 extern char **environ;
 void syserr(char *msg); 
 extern int errno;
-void forking_new_command(char *command);
+void forking_new_command(char **args);
 
 void syserr(char * msg)   /* report error code and abort */
 {
@@ -21,8 +21,8 @@ void syserr(char * msg)   /* report error code and abort */
 }
 
 
-void forking_new_command(char *command, char **args) {
-	printf("THE COMMAND: '%s'\n",command);
+void forking_new_command(char **args) {
+	printf("THE COMMAND: '%s'\n",args[0]);
 	pid_t pid;
 	pid = getpid();
 	switch (fork()) {
@@ -30,7 +30,7 @@ void forking_new_command(char *command, char **args) {
 			syserr("fork");
 		case 0:
 			pid = getpid();
-			execlp(command,args,NULL);
+			execvp(args[0],args);
 			syserr("execl");
 	}
 }
@@ -63,15 +63,16 @@ int main (int argc, char ** argv)
                 /*********DIR ***************/
                 if (!strcmp(args[0],"dir")){/*TODO: implment dir */
 						if (args[1]) {/*if something after dir*/
-							char[] ls = ["ls","-al"];
-							char *str;
+							/*char *str;
+							char *ls = "ls -al ";
 							str = malloc(strlen(ls) + strlen(args[1])+1);
 							strcat(str,ls);
 							strcat(str,args[1]);
-							/*system(str);*/
-
-							/*forking_new_command(str);*/	
-							free(str);
+							printf("The Command: %s");*/
+	
+							char * args_to_pass[] = {"ls","-al",args[1],NULL};
+							forking_new_command(args_to_pass);
+							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
 							/*system("ls -al .");*/
 							/*forking_new_command("ls -al .");*/
