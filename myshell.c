@@ -22,7 +22,6 @@ void syserr(char * msg)   /* report error code and abort */
 
 
 void forking_new_command(char **args) {
-	printf("THE COMMAND: '%s'\n",args[0]);
 	pid_t pid;
 	pid = getpid();
 	switch (fork()) {
@@ -33,6 +32,7 @@ void forking_new_command(char **args) {
 			execvp(args[0],args);
 			syserr("execl");
 	}
+	exit(0);
 }
 
 int main (int argc, char ** argv)
