@@ -25,7 +25,22 @@ void syserr(const char * msg)   /* report error code and abort */
    abort();
 }
 
-
+void forkExec(char * args[],char *shellVar) {
+	int status;
+	pid_t pid;
+	switch (pid = fork()) {
+	case -1:
+		syserr("fork");
+	case 0:
+		setenv("parent",shellVar,1);	
+		execvp(args[0],args);
+		syserr("exec");
+		exit(0);
+	default:
+		if (1==1)/*** if  not in the background **/
+			waitpid(pid, &status, WUNTRACED);
+	}
+}
 
 
 int main (int argc, char ** argv)
@@ -41,27 +56,31 @@ int main (int argc, char ** argv)
 	
 
 	/******setting environment for shell variable *******/
-	{
-		char *shellVar;
-		shellVar = malloc(strlen(original_path) + strlen("/myshell") + 1);
-		strcat(shellVar,original_path);
-		strcat(shellVar,"/myshell");
-		setenv("shell",shellVar,1);
-	}
+	
+	char *shellVar;
+	shellVar = malloc(strlen(original_path) + strlen("/myshell") + 1);
+	strcat(shellVar,original_path);
+	strcat(shellVar,"/myshell");
+	setenv("shell",shellVar,1);
+	
 
 	/*****setting environment for shell variable *******/
 
 
-	printf("%s\n",original_path);
     while (!feof(stdin)) { 
 /* get command line from input */
 		sigset(SIGINT,SIG_IGN);
+
+
+
 		getcwd(path_prompt,MAX_BUFFER);
 		char *end_prompt = " ==> ";
 		prompt = malloc( strlen(path_prompt) + strlen(end_prompt) + 1 );
 		strcat(prompt,path_prompt);
 		strcat(prompt,end_prompt);
-        fputs (prompt, stdout);                /* write prompt*/
+		fprintf(stdout,"%s",prompt); 
+        
+        
         /*free(prompt);*/
         if (fgets (buf, MAX_BUFFER, stdin )) { /* read a line*/
 /* tokenize the input into args array */
@@ -108,16 +127,16 @@ int main (int argc, char ** argv)
                	/*********DIR ***************/
                 if (!strcmp(args[0],"dir")){/*TODO: implment dir */
 						if (args[1]) {/*if something after dir*/
-							char *str;
+							/*char *str;
 							char *ls = "ls -al ";
 							str = malloc(strlen(ls) + strlen(args[1])+1);
 							strcat(str,ls);
-							strcat(str,args[1]);
+							strcat(str,args[1]);*/
 	
-							/*char * args_to_pass[] = {"ls","-al",args[1],NULL};
-							forking_new_command(args_to_pass);
-							continue;*/
-							system(str);
+							char * args_to_pass[] = {"ls","-al",args[1],NULL};
+							forkExec(args_to_pass,shellVar);
+							
+							/*system(str);*/
 							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
 							system("ls -al .");
@@ -189,6 +208,7 @@ int main (int argc, char ** argv)
 					case -1:
 						syserr("fork");
 					case 0:
+						setenv("parent",shellVar,1);	
 						execvp(args[0],args);
 						syserr("exec");
 						exit(0);
