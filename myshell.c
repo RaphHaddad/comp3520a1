@@ -49,6 +49,20 @@ int main (int argc, char ** argv)
     char *prompt;/* shell prompt */
 /* keep reading input until "quit" command or eof of redirected input */
 	getcwd(original_path,MAX_BUFFER);
+	
+
+	/******setting environment for shell variable *******/
+	{
+		char *shellVar;
+		shellVar = malloc(strlen(original_path) + strlen("/myshell") + 1);
+		strcat(shellVar,original_path);
+		strcat(shellVar,"/myshell");
+		setenv("shell",shellVar,1);
+	}
+
+	/*****setting environment for shell variable *******/
+
+
 	printf("%s\n",original_path);
     while (!feof(stdin)) { 
 /* get command line from input */
@@ -133,12 +147,12 @@ int main (int argc, char ** argv)
 							copy = strdup(working_dir);
 							setenv("PWD",copy,1);
 						} else {
-							printf("No such directory\n");
+							fprintf(stdout,"No such directory\n");
 						}
 
 					} else {
 
-						printf("No directory selected the path s: %s \n", getenv("PWD"));
+						fprintf(stdout,"No directory selected the path is: %s \n", getenv("PWD"));
 					}
 					continue;
 				}
@@ -148,7 +162,7 @@ int main (int argc, char ** argv)
 				/*********environ*********/
 				if (!strcmp(args[0],"environ")){
 					char ** env = environ;
-					while (*env) printf("%s\n",*env++);
+					while (*env) fprintf(stdout,"%s\n",*env++);
 					continue;
 				}
 				/********environ********/
@@ -161,7 +175,6 @@ int main (int argc, char ** argv)
 						while (args[i]){/*loop to get the length of string to malloc */
 							lengthStr = strlen(args[i])+ lengthStr + 1;/*plus 1 for the spaces */
 							i = i + 1;
-							/*printf("%s\n",args[i]);*/
 						}
 						str = malloc(lengthStr);
 						i = 1; /* reseting counter to actually concat to variable str */
@@ -170,8 +183,7 @@ int main (int argc, char ** argv)
 							strcat(str," ");
 							i = i +1;
 						}
-					printf("%s\n",str);
-					/*free(str);*/
+					fprintf(stdout,"%s\n",str);
 					continue;
 				}
 				/**********echo ************/
@@ -179,9 +191,20 @@ int main (int argc, char ** argv)
 			
 				/* else pass command onto OS (or in this instance, print them out) */
                 arg = args;
-                while (*arg) fprintf(stdout,"%s ",*arg++);
-				fputs ("\n", stdout);
+				/*while (*arg) fprintf(stdout,"%s ",*arg++);
+				fputs ("\n", stdout);*/
+				{
+					pid_t pid;
+					switch (pid = fork()) {
+					case -1:
+						syserr("fork");
+					case 0:
+						execvp(args[0],args);
+						syserr("exec");
+					}
+				}
 
+					
             }
 
         }
