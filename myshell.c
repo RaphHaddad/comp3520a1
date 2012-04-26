@@ -126,16 +126,19 @@ int main (int argc, char ** argv)
 				/*********CD ***************/
 				if (!strcmp(args[0],"cd")) {
 					if (args[1]){/*** if user has supplied directory */
-						chdir(args[1]);
-						char *copy;
-						char working_dir[MAX_BUFFER];
-						getcwd(working_dir,MAX_BUFFER);
-						copy = strdup(working_dir);
-						setenv("PWD",copy,1);
+						if (chdir(args[1])==0) {
+							char *copy;
+							char working_dir[MAX_BUFFER];
+							getcwd(working_dir,MAX_BUFFER);
+							copy = strdup(working_dir);
+							setenv("PWD",copy,1);
+						} else {
+							printf("No such directory\n");
+						}
 
 					} else {
 
-						printf("-->PATH IS:%s<-- \n", getenv("PWD"));
+						printf("No directory selected the path s: %s \n", getenv("PWD"));
 					}
 					continue;
 				}
