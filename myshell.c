@@ -66,27 +66,25 @@ int main (int argc, char ** argv)
                	/*********DIR ***************/
                 if (!strcmp(args[0],"dir")){/*TODO: implment dir */
 						if (args[1]) {/*if something after dir*/
-							/*char *str;
+							char *str;
 							char *ls = "ls -al ";
 							str = malloc(strlen(ls) + strlen(args[1])+1);
 							strcat(str,ls);
 							strcat(str,args[1]);
-							printf("The Command: %s");*/
 	
-							char * args_to_pass[] = {"ls","-al",args[1],NULL};
+							/*char * args_to_pass[] = {"ls","-al",args[1],NULL};
 							forking_new_command(args_to_pass);
-							continue;
-							/*free(str);*/
+							continue;*/
+							system(str);
+							free(str);
 						} else {/* if no directory is selected assume it is current directory */
-							/*system("ls -al .");*/
-							/*forking_new_command("ls -al .");*/
+							system("ls -al .");
 						}
-						printf ("hi");	
 				}
 				/**************DIR ***********/
 
 				/*********CD ***************/
-				if (!strcmpr(args[0],"cd")) {
+				if (!strcmp(args[0],"cd")) {
 
 
 				}
@@ -118,11 +116,6 @@ int main (int argc, char ** argv)
 				}
 				
 
-				/**** anything else ***/
-				{
-					forking_newCommand(args);
-				}
-				/** anything else ***/
 			
 				/* else pass command onto OS (or in this instance, print them out) */
                 arg = args;
