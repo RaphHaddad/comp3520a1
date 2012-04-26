@@ -87,7 +87,7 @@ int main (int argc, char ** argv)
 				/*********CD ***************/
 				if (!strcmp(args[0],"cd")) {
 					if (args[1]){/*** if user has supplied directory */
-						/*chdir(args[1]);*/
+						chdir(args[1]);
 
 					} else {
 
