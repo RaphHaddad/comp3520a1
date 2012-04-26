@@ -45,9 +45,11 @@ int main (int argc, char ** argv)
     char * args[MAX_ARGS];                     /* pointers to arg strings */
     char ** arg;                               /* working pointer thru args */
     char path_prompt[MAX_BUFFER]; 
+    char original_path[MAX_BUFFER];				/*store in different directory incase user changes which directory he/she is on */
     char *prompt;/* shell prompt */
 /* keep reading input until "quit" command or eof of redirected input */
-
+	getcwd(original_path,MAX_BUFFER);
+	printf("%s\n",original_path);
     while (!feof(stdin)) { 
 /* get command line from input */
 		sigset(SIGINT,SIG_IGN);
@@ -67,9 +69,22 @@ int main (int argc, char ** argv)
 			if (args[0]) {                     /* if there's anything there */
 				/* check for internal/external command */
 			
+				/**********help ****************/
+				if (!strcmp(args[0],"help")) {
+					char *command = malloc (strlen("more ") + strlen(original_path) + strlen("/readme") + 1);
+					strcat(command,"more ");
+					strcat(command,original_path);
+					strcat(command,"/readme");
+					system(command);
+				}
+
+				/**********help****************/
+
+
 				/*************pause************/
 				if(!strcmp(args[0],"pause")){
 					getpass("Press Enter to continue...");/*function actually collects input and waits for user to press enter, exactly what we need */
+					sigset(SIGINT,SIG_IGN);
 					continue;
 				}
 				/*************pause************/
