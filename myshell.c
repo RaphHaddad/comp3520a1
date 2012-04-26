@@ -25,7 +25,7 @@ void syserr(const char * msg)   /* report error code and abort */
    abort();
 }
 
-void forkExec(char * args[],char *shellVar,int inputType,int outputType,FILE * inputFile, FILE *outputFile) {
+void forkExec(char *args[],char *shellVar,int inputType,int outputType,FILE * inputFile, FILE *outputFile) {
 	int status;
 	pid_t pid;
 	switch (pid = fork()) {
@@ -33,7 +33,7 @@ void forkExec(char * args[],char *shellVar,int inputType,int outputType,FILE * i
 		syserr("fork");
 	case 0:
 		setenv("parent",shellVar,1);	
-		execvp(args[0],args);
+		execvp(*args,args);
 		syserr("exec");
 		exit(0);
 	default:
@@ -183,14 +183,17 @@ int main (int argc, char ** argv)
 							str = malloc(strlen(ls) + strlen(args[1])+1);
 							strcat(str,ls);
 							strcat(str,args[1]);*/
-	
-							args_to_pass = {"ls","-al",args[1],NULL};
+							args_to_pass[0] = "ls";
+							args_to_pass[1] = "-al";
+							args_to_pass[2] = args[1];
 							forkExec(args_to_pass,shellVar,inputType,outputType,inputFile,outputFile);
-							
+							str = "";	
 							/*system(str);*/
 							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
-							args_to_pass = {"ls","-al",".",NULL};
+							args_to_pass[0]= "ls";
+							args_to_pass[1] = "-al";
+							args_to_pass[2] = ".";
 							forkExec(args_to_pass,shellVar,inputType,outputType,inputFile,outputFile);
 						}
 						continue;
