@@ -25,7 +25,7 @@ void syserr(const char * msg)   /* report error code and abort */
    abort();
 }
 
-void forkExec(char * args[],char *shellVar) {
+void forkExec(char * args[],char *shellVar,int inputType,int outputType,FILE * inputFile, FILE *outputFile) {
 	int status;
 	pid_t pid;
 	switch (pid = fork()) {
@@ -46,30 +46,33 @@ void forkExec(char * args[],char *shellVar) {
 int main (int argc, char ** argv)
 {
 	int outputType; /** trigger used to tell which output type. 0 for no redirection, > is 1, >> is 2*/
+	int inputType; /** trigger used to tell which input type. 0 for no redirection, < is 1 */
+
+	/*variables for input output files */
+	char *inputFileStr;
+	char *outputFileStr;
+	FILE *outputFile;
+	FILE *inputFile;
+
     char buf[MAX_BUFFER];                      /* line buffer */
     char * args[MAX_ARGS];                     /* pointers to arg strings */
     char ** arg;                               /* working pointer thru args */
     char path_prompt[MAX_BUFFER]; 
     char original_path[MAX_BUFFER];				/*store in different directory incase user changes which directory he/she is on */
     char *prompt;/* shell prompt */
-/* keep reading input until "quit" command or eof of redirected input */
+	char *shellVar;/** shel location **/
+	const char *end_prompt;/**variabel to store ==> at end of directly for prompt **/
+	int i = 0;/** counter for input output setting */
+	
+	
+	/* keep reading input until "quit" command or eof of redirected input */
 	getcwd(original_path,MAX_BUFFER);
 
 
-	/*********calculating input/output flags ************/
-		
-	while (*++argv) {
-		printf("\n--\n%s\n--\n",*argv);
-		if (!strcmp(*argv,">")) 
-			outputType = 1;
-		if (!strcmp(*argv,">>"))
-			outputType = 2;
-	}
-	/*********calculating input/output flags ************/
+
 
 	/******setting environment for shell variable *******/
 	
-	char *shellVar;
 	shellVar = malloc(strlen(original_path) + strlen("/myshell") + 1);
 	strcat(shellVar,original_path);
 	strcat(shellVar,"/myshell");
@@ -84,9 +87,9 @@ int main (int argc, char ** argv)
 		sigset(SIGINT,SIG_IGN);
 
 
-
+		/**setting the prompt **/
 		getcwd(path_prompt,MAX_BUFFER);
-		char *end_prompt = " ==> ";
+		end_prompt = " ==> ";
 		prompt = malloc( strlen(path_prompt) + strlen(end_prompt) + 1 );
 		strcat(prompt,path_prompt);
 		strcat(prompt,end_prompt);
@@ -95,7 +98,7 @@ int main (int argc, char ** argv)
         
         /*free(prompt);*/
         if (fgets (buf, MAX_BUFFER, stdin )) { /* read a line*/
-/* tokenize the input into args array */
+		/* tokenize the input into args array */
             arg = args;
             *arg++ = strtok(buf,SEPARATORS);   /* tokenize input */
             while ((*arg++ = strtok(NULL,SEPARATORS)));
@@ -103,6 +106,39 @@ int main (int argc, char ** argv)
 			if (args[0]) {                     /* if there's anything there */
 				/* check for internal/external command */
 				
+				
+				
+				/*********calculating input/output flags ************/
+				{
+
+					outputFile = stdout;
+					while (args[i]){
+						if (!strcmp(args[i],"<")){
+							inputType = 1;
+							inputFile = args[i + 1];
+						}
+
+						if (!strcmp(args[i],">")){
+							outputType = 1;
+							outputFile = args[i + 1];
+						}
+
+
+						if (!strcmp(args[i],">>")){
+							outputType = 2;
+							inputFile = args[i + 1];
+						}
+						i = i + 1;
+					}
+					
+
+				}
+
+
+				/*********calculating input/output flags ************/
+
+
+
 
 				/**********help ****************/
 				if (!strcmp(args[0],"help")) {
@@ -147,13 +183,13 @@ int main (int argc, char ** argv)
 							strcat(str,args[1]);*/
 	
 							char * args_to_pass[] = {"ls","-al",args[1],NULL};
-							forkExec(args_to_pass,shellVar);
+							forkExec(args_to_pass,shellVar,inputType,outputType,inputFile,outputFile);
 							
 							/*system(str);*/
 							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
 							char *args_to_pass[] = {"ls","-al",".",NULL};
-							forkExec(args_to_pass,shellVar);
+							forkExec(args_to_pass,shellVar,inputType,outputType,inputFile,outputFile);
 						}
 						continue;
 				}
@@ -169,12 +205,12 @@ int main (int argc, char ** argv)
 							copy = strdup(working_dir);
 							setenv("PWD",copy,1);
 						} else {
-							fprintf(stdout,"No such directory\n");
+							fprintf(outputFile,"No such directory\n");
 						}
 
 					} else {
 
-						fprintf(stdout,"No directory selected the path is: %s \n", getenv("PWD"));
+						fprintf(outputFile,"No directory selected the path is: %s \n", getenv("PWD"));
 					}
 					continue;
 				}
@@ -184,7 +220,7 @@ int main (int argc, char ** argv)
 				/*********environ*********/
 				if (!strcmp(args[0],"environ")){
 					char ** env = environ;
-					while (*env) fprintf(stdout,"%s\n",*env++);
+					while (*env) fprintf(outputFile,"%s\n",*env++);
 					continue;
 				}
 				/********environ********/
@@ -205,7 +241,7 @@ int main (int argc, char ** argv)
 							strcat(str," ");
 							i = i +1;
 						}
-					fprintf(stdout,"%s\n",str);
+					fprintf(outputFile,"%s\n",str);
 					continue;
 				}
 				/**********echo ************/
@@ -215,7 +251,7 @@ int main (int argc, char ** argv)
                 arg = args;
 				/*while (*arg) fprintf(stdout,"%s ",*arg++);
 				fputs ("\n", stdout);*/
-				forkExec(args,shellVar);
+				forkExec(args,shellVar,inputType,outputType,inputFile,outputFile);
 
 					
             }
