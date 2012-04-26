@@ -17,7 +17,6 @@
 pid_t waitpid(pid_t pid, int *stat_loc, int options);
 extern char **environ;
 void syserr(const char *msg); 
-void forking_new_command(char **args);
 
 
 void syserr(const char * msg)   /* report error code and abort */
@@ -27,16 +26,6 @@ void syserr(const char * msg)   /* report error code and abort */
 }
 
 
-void forking_new_command(char *args[]) {
-	pid_t pid;
-	switch (pid = fork()) {
-		case -1:
-			syserr("fork");
-		case 0:
-			execvp(args[0],args);
-			syserr("exec");
-	}
-}
 
 
 int main (int argc, char ** argv)
