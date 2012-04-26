@@ -103,39 +103,42 @@ int main (int argc, char ** argv)
         /*free(prompt);*/
         if (fgets (buf, MAX_BUFFER, stdin )) { /* read a line*/
 		/* tokenize the input into args array */
-            arg = args;
+            arg = args_temp;
             *arg++ = strtok(buf,SEPARATORS);   /* tokenize input */
             while ((*arg++ = strtok(NULL,SEPARATORS)));
-
-
-			/****detecting input/output flags etc *
+			
+			/****detecting input/output flags etc */
+			outputFile = stdout;
 			i = 0;
 			j = 0;
 			while (args_temp[i]) {
-				if (!strcmp(args[i],"<")){
+				if (!strcmp(args_temp[i],"<")){
 					inputType = 1;
-					inputFileStr = args[i + 1];
+					inputFileStr = args_temp[i + 1];
+					i = i + 2;
 					break;
 				}
 
-				if (!strcmp(args[i],">")){
+				if (!strcmp(args_temp[i],">")){
 					outputType = 1;
-					outputFileStr = args[i + 1];
+					outputFileStr = args_temp[i + 1];
 					outputFile = fopen(outputFileStr,"w");
+					i = i + 2;
 					break;
 				}
 
-				if (!strcmp(args[i],">>")){
+				if (!strcmp(args_temp[i],">>")){
 					outputType = 2;
-					inputFileStr = args[i + 1];
+					inputFileStr = args_temp[i + 1];
 					outputFile = fopen(outputFileStr,"a+");
+					i = i + 2;
 					break;
 				}
 				args[j] = args_temp[i];
-				printf("\n----\n%s\n---\n",*args_temp[i]);	
+				printf("\n----\n%s\n---\n",args[j]);	
 				j = j + 1;
 				i = i + 1;
-			}*/
+			}
 
             /* last entry will be NULL */									
 			if (args[0]) {                     /* if there's anything there */
