@@ -20,7 +20,6 @@ void syserr(const char *msg);
 void forking_new_command(char **args);
 
 
-
 void syserr(const char * msg)   /* report error code and abort */
 {
    fprintf(stderr,"%s: %s", strerror(errno), msg);
@@ -39,6 +38,7 @@ void forking_new_command(char *args[]) {
 	}
 }
 
+
 int main (int argc, char ** argv)
 {
     char buf[MAX_BUFFER];                      /* line buffer */
@@ -50,7 +50,7 @@ int main (int argc, char ** argv)
 
     while (!feof(stdin)) { 
 /* get command line from input */
-		signal(SIGINT,NULL);
+		sigset(SIGINT,SIG_IGN);
 		getcwd(path_prompt,MAX_BUFFER);
 		char *end_prompt = " ==> ";
 		prompt = malloc( strlen(path_prompt) + strlen(end_prompt) + 1 );
@@ -83,7 +83,7 @@ int main (int argc, char ** argv)
 
                 /***************quit***************/
                 if (!strcmp(args[0],"quit"))   /*  "quit" command */
-                    break;                     /*  break out of 'while' loop */
+                	break;
                /*************quit****************/
 
 
