@@ -45,6 +45,7 @@ void forkExec(char * args[],char *shellVar) {
 
 int main (int argc, char ** argv)
 {
+	int outputType; /** trigger used to tell which output type. 0 for no redirection, > is 1, >> is 2*/
     char buf[MAX_BUFFER];                      /* line buffer */
     char * args[MAX_ARGS];                     /* pointers to arg strings */
     char ** arg;                               /* working pointer thru args */
@@ -53,7 +54,18 @@ int main (int argc, char ** argv)
     char *prompt;/* shell prompt */
 /* keep reading input until "quit" command or eof of redirected input */
 	getcwd(original_path,MAX_BUFFER);
-	
+
+
+	/*********calculating input/output flags ************/
+		
+	while (*++argv) {
+		printf("\n--\n%s\n--\n",*argv);
+		if (!strcmp(*argv,">")) 
+			outputType = 1;
+		if (!strcmp(*argv,">>"))
+			outputType = 2;
+	}
+	/*********calculating input/output flags ************/
 
 	/******setting environment for shell variable *******/
 	
@@ -90,7 +102,8 @@ int main (int argc, char ** argv)
 			/* last entry will be NULL */									
 			if (args[0]) {                     /* if there's anything there */
 				/* check for internal/external command */
-			
+				
+
 				/**********help ****************/
 				if (!strcmp(args[0],"help")) {
 					char *command = malloc (strlen("more ") + strlen(original_path) + strlen("/readme") + 1);
@@ -139,7 +152,8 @@ int main (int argc, char ** argv)
 							/*system(str);*/
 							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
-							system("ls -al .");
+							char *args_to_pass[] = {"ls","-al",".",NULL};
+							forkExec(args_to_pass,shellVar);
 						}
 						continue;
 				}
@@ -201,22 +215,7 @@ int main (int argc, char ** argv)
                 arg = args;
 				/*while (*arg) fprintf(stdout,"%s ",*arg++);
 				fputs ("\n", stdout);*/
-				{
-					int status;
-					pid_t pid;
-					switch (pid = fork()) {
-					case -1:
-						syserr("fork");
-					case 0:
-						setenv("parent",shellVar,1);	
-						execvp(args[0],args);
-						syserr("exec");
-						exit(0);
-					default:
-						if (1==1)/*** if  not in the background **/
-							waitpid(pid, &status, WUNTRACED);
-					}
-				}
+				forkExec(args,shellVar);
 
 					
             }
