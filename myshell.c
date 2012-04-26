@@ -63,13 +63,27 @@ int main (int argc, char ** argv)
 			/* last entry will be NULL */									
 			if (args[0]) {                     /* if there's anything there */
 				/* check for internal/external command */
+			
+				/*************pause************/
+				if(!strcmp(args[0],"pause")){
+					printf("Press Enter to continue...");
+					continue;
+				}
+				/*************pause************/
+				
+				/**************clr*****************/
 				if (!strcmp(args[0],"clr")) { /*  "clear" command */
                     system("clear");
                     continue;
                 }
+                /***************clr**************/
+
+                /***************quit***************/
                 if (!strcmp(args[0],"quit"))   /*  "quit" command */
                     break;                     /*  break out of 'while' loop */
-               
+               /*************quit****************/
+
+
                	/*********DIR ***************/
                 if (!strcmp(args[0],"dir")){/*TODO: implment dir */
 						if (args[1]) {/*if something after dir*/
@@ -110,13 +124,15 @@ int main (int argc, char ** argv)
 
 				/**********CD ***********/
 
-
+				/*********environ*********/
 				if (!strcmp(args[0],"environ")){
 					char ** env = environ;
 					while (*env) printf("%s\n",*env++);
 					continue;
 				}
+				/********environ********/
 
+				/*******echo************/
 				if (!strcmp(args[0],"echo")) {
 						int i= 0;/*start count at zero as the command echo doesn't need to be outputed*/
 						char * str;
@@ -137,7 +153,7 @@ int main (int argc, char ** argv)
 					/*free(str);*/
 					continue;
 				}
-				
+				/**********echo ************/
 
 			
 				/* else pass command onto OS (or in this instance, print them out) */
