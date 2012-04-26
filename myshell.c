@@ -56,6 +56,7 @@ int main (int argc, char ** argv)
 
     char buf[MAX_BUFFER];                      /* line buffer */
     char * args[MAX_ARGS];                     /* pointers to arg strings */
+    char *args_temp[MAX_ARGS];					/* used as above to remove < >> and associated files */
     char ** arg;                               /* working pointer thru args */
     char path_prompt[MAX_BUFFER]; 
     char original_path[MAX_BUFFER];				/*store in different directory incase user changes which directory he/she is on */
@@ -63,6 +64,7 @@ int main (int argc, char ** argv)
 	char *shellVar;/** shel location **/
 	const char *end_prompt;/**variabel to store ==> at end of directly for prompt **/
 	int i = 0;/** counter for input output setting */
+	int j = 0;
 	char * str; /** temp str **/
 	int lengthStr; /** used for echo **/	
 	char *args_to_pass[100];/** 100 arguments is more than enough **/
@@ -104,43 +106,42 @@ int main (int argc, char ** argv)
             arg = args;
             *arg++ = strtok(buf,SEPARATORS);   /* tokenize input */
             while ((*arg++ = strtok(NULL,SEPARATORS)));
-			/* last entry will be NULL */									
+
+
+			/****detecting input/output flags etc *
+			i = 0;
+			j = 0;
+			while (args_temp[i]) {
+				if (!strcmp(args[i],"<")){
+					inputType = 1;
+					inputFileStr = args[i + 1];
+					break;
+				}
+
+				if (!strcmp(args[i],">")){
+					outputType = 1;
+					outputFileStr = args[i + 1];
+					outputFile = fopen(outputFileStr,"w");
+					break;
+				}
+
+				if (!strcmp(args[i],">>")){
+					outputType = 2;
+					inputFileStr = args[i + 1];
+					outputFile = fopen(outputFileStr,"a+");
+					break;
+				}
+				args[j] = args_temp[i];
+				printf("\n----\n%s\n---\n",*args_temp[i]);	
+				j = j + 1;
+				i = i + 1;
+			}*/
+
+            /* last entry will be NULL */									
 			if (args[0]) {                     /* if there's anything there */
 				/* check for internal/external command */
 				
-				
-				
-				/*********calculating input/output flags ************/
-				{
-
-					outputFile = stdout;
-					while (args[i]){
-						if (!strcmp(args[i],"<")){
-							inputType = 1;
-							inputFileStr = args[i + 1];
-						}
-
-						if (!strcmp(args[i],">")){
-							outputType = 1;
-							outputFileStr = args[i + 1];
-						}
-
-
-						if (!strcmp(args[i],">>")){
-							outputType = 2;
-							inputFileStr = args[i + 1];
-						}
-						i = i + 1;
-					}
-					
-
-				}
-
-
-				/*********calculating input/output flags ************/
-
-
-
+	
 
 				/**********help ****************/
 				if (!strcmp(args[0],"help")) {
