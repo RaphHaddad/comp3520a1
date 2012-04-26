@@ -42,13 +42,19 @@ int main (int argc, char ** argv)
     char buf[MAX_BUFFER];                      /* line buffer */
     char * args[MAX_ARGS];                     /* pointers to arg strings */
     char ** arg;                               /* working pointer thru args */
-    char prompt[MAX_BUFFER];                    /* shell prompt */
+    char path_prompt[MAX_BUFFER]; 
+    char *prompt;/* shell prompt */
 /* keep reading input until "quit" command or eof of redirected input */
 
     while (!feof(stdin)) { 
 /* get command line from input */
-		getcwd(prompt,MAX_BUFFER);
+		getcwd(path_prompt,MAX_BUFFER);
+		char *end_prompt = " ==> ";
+		prompt = malloc( strlen(path_prompt) + strlen(end_prompt) + 1 );
+		strcat(prompt,path_prompt);
+		strcat(prompt,end_prompt);
         fputs (prompt, stdout);                /* write prompt*/
+        free(prompt);
         if (fgets (buf, MAX_BUFFER, stdin )) { /* read a line*/
 /* tokenize the input into args array */
             arg = args;
