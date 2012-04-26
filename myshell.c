@@ -129,17 +129,16 @@ int main (int argc, char ** argv)
 
 				if (!strcmp(args_temp[i],">>")){
 					outputType = 2;
-					inputFileStr = args_temp[i + 1];
+					outputFileStr = args_temp[i + 1];
 					outputFile = fopen(outputFileStr,"a+");
 					i = i + 2;
 					break;
 				}
 				args[j] = args_temp[i];
-				printf("\n----\n%s\n---\n",args[j]);	
 				j = j + 1;
 				i = i + 1;
 			}
-
+				args[j] = NULL;
             /* last entry will be NULL */									
 			if (args[0]) {                     /* if there's anything there */
 				/* check for internal/external command */
