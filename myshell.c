@@ -77,10 +77,11 @@ int main (int argc, char ** argv)
 							forking_new_command(args_to_pass);
 							continue;*/
 							system(str);
-							free(str);
+							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
 							system("ls -al .");
 						}
+						continue;
 				}
 				/**************DIR ***********/
 
@@ -96,8 +97,9 @@ int main (int argc, char ** argv)
 
 					} else {
 
-
+						printf("-->PATH IS:%s<-- \n", getenv("PWD"));
 					}
+					continue;
 				}
 
 				/**********CD ***********/
@@ -106,7 +108,9 @@ int main (int argc, char ** argv)
 				if (!strcmp(args[0],"environ")){
 					char ** env = environ;
 					while (*env) printf("%s\n",*env++);
+					continue;
 				}
+
 				if (!strcmp(args[0],"echo")) {
 						int i= 0;/*start count at zero as the command echo doesn't need to be outputed*/
 						char * str;
@@ -124,6 +128,8 @@ int main (int argc, char ** argv)
 							i = i +1;
 						}
 					printf("%s\n",str);
+					/*free(str);*/
+					continue;
 				}
 				
 
