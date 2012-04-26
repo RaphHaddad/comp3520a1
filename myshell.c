@@ -88,6 +88,11 @@ int main (int argc, char ** argv)
 				if (!strcmp(args[0],"cd")) {
 					if (args[1]){/*** if user has supplied directory */
 						chdir(args[1]);
+						char *copy;
+						char working_dir[MAX_BUFFER];
+						getcwd(working_dir,MAX_BUFFER);
+						copy = strdup(working_dir);
+						setenv("PWD",copy,1);
 
 					} else {
 
