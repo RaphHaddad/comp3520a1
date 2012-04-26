@@ -63,7 +63,9 @@ int main (int argc, char ** argv)
 	char *shellVar;/** shel location **/
 	const char *end_prompt;/**variabel to store ==> at end of directly for prompt **/
 	int i = 0;/** counter for input output setting */
-	
+	char * str; /** temp str **/
+	int lengthStr; /** used for echo **/	
+	char *args_to_pass[100];/** 100 arguments is more than enough **/
 	
 	/* keep reading input until "quit" command or eof of redirected input */
 	getcwd(original_path,MAX_BUFFER);
@@ -115,18 +117,18 @@ int main (int argc, char ** argv)
 					while (args[i]){
 						if (!strcmp(args[i],"<")){
 							inputType = 1;
-							inputFile = args[i + 1];
+							inputFileStr = args[i + 1];
 						}
 
 						if (!strcmp(args[i],">")){
 							outputType = 1;
-							outputFile = args[i + 1];
+							outputFileStr = args[i + 1];
 						}
 
 
 						if (!strcmp(args[i],">>")){
 							outputType = 2;
-							inputFile = args[i + 1];
+							inputFileStr = args[i + 1];
 						}
 						i = i + 1;
 					}
@@ -182,13 +184,13 @@ int main (int argc, char ** argv)
 							strcat(str,ls);
 							strcat(str,args[1]);*/
 	
-							char * args_to_pass[] = {"ls","-al",args[1],NULL};
+							args_to_pass = {"ls","-al",args[1],NULL};
 							forkExec(args_to_pass,shellVar,inputType,outputType,inputFile,outputFile);
 							
 							/*system(str);*/
 							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
-							char *args_to_pass[] = {"ls","-al",".",NULL};
+							args_to_pass = {"ls","-al",".",NULL};
 							forkExec(args_to_pass,shellVar,inputType,outputType,inputFile,outputFile);
 						}
 						continue;
@@ -227,9 +229,8 @@ int main (int argc, char ** argv)
 
 				/*******echo************/
 				if (!strcmp(args[0],"echo")) {
-						int i= 0;/*start count at zero as the command echo doesn't need to be outputed*/
-						char * str;
-						int lengthStr = 1;/* starting at one because of trailing \n */
+						i= 0;/*start count at zero as the command echo doesn't need to be outputed*/
+						lengthStr = 1;/* starting at one because of trailing \n */
 						while (args[i]){/*loop to get the length of string to malloc */
 							lengthStr = strlen(args[i])+ lengthStr + 1;/*plus 1 for the spaces */
 							i = i + 1;
