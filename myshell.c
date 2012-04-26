@@ -42,11 +42,12 @@ int main (int argc, char ** argv)
     char buf[MAX_BUFFER];                      /* line buffer */
     char * args[MAX_ARGS];                     /* pointers to arg strings */
     char ** arg;                               /* working pointer thru args */
-    const char * prompt = "==>" ;                    /* shell prompt */
+    char prompt[MAX_BUFFER];                    /* shell prompt */
 /* keep reading input until "quit" command or eof of redirected input */
 
     while (!feof(stdin)) { 
 /* get command line from input */
+		getcwd(prompt,MAX_BUFFER);
         fputs (prompt, stdout);                /* write prompt*/
         if (fgets (buf, MAX_BUFFER, stdin )) { /* read a line*/
 /* tokenize the input into args array */
@@ -85,8 +86,13 @@ int main (int argc, char ** argv)
 
 				/*********CD ***************/
 				if (!strcmp(args[0],"cd")) {
+					if (args[1]){/*** if user has supplied directory */
+						/*chdir(args[1]);*/
+
+					} else {
 
 
+					}
 				}
 
 				/**********CD ***********/
