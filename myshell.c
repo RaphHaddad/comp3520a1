@@ -54,7 +54,7 @@ int main (int argc, char ** argv)
 		strcat(prompt,path_prompt);
 		strcat(prompt,end_prompt);
         fputs (prompt, stdout);                /* write prompt*/
-        free(prompt);
+        /*free(prompt);*/
         if (fgets (buf, MAX_BUFFER, stdin )) { /* read a line*/
 /* tokenize the input into args array */
             arg = args;
