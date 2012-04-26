@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
+
 
 #define MAX_BUFFER 1024                        /* max line buffer */
 #define MAX_ARGS 64                            /* max # args */
@@ -48,6 +50,7 @@ int main (int argc, char ** argv)
 
     while (!feof(stdin)) { 
 /* get command line from input */
+		signal(SIGINT,NULL);
 		getcwd(path_prompt,MAX_BUFFER);
 		char *end_prompt = " ==> ";
 		prompt = malloc( strlen(path_prompt) + strlen(end_prompt) + 1 );
@@ -66,7 +69,7 @@ int main (int argc, char ** argv)
 			
 				/*************pause************/
 				if(!strcmp(args[0],"pause")){
-					printf("Press Enter to continue...");
+					getpass("Press Enter to continue...");/*function actually collects input and waits for user to press enter, exactly what we need */
 					continue;
 				}
 				/*************pause************/
