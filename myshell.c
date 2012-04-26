@@ -25,13 +25,16 @@ void syserr(const char * msg)   /* report error code and abort */
    abort();
 }
 
-void forkExec(char *args[],char *shellVar,int inputType,int outputType,FILE * inputFile, FILE *outputFile) {
+void forkExec(char *args[],char *shellVar,int inputType,int outputType,char * inputFileStr, char *outputFileStr) {
 	int status;
 	pid_t pid;
 	switch (pid = fork()) {
 	case -1:
 		syserr("fork");
 	case 0:
+		/*if (outputType = 1) {
+			freopen(
+		}*/
 		setenv("parent",shellVar,1);	
 		execvp(*args,args);
 		syserr("exec");
@@ -189,7 +192,7 @@ int main (int argc, char ** argv)
 							args_to_pass[0] = "ls";
 							args_to_pass[1] = "-al";
 							args_to_pass[2] = args[1];
-							forkExec(args_to_pass,shellVar,inputType,outputType,inputFile,outputFile);
+							forkExec(args_to_pass,shellVar,inputType,outputType,inputFileStr,outputFileStr);
 							str = "";	
 							/*system(str);*/
 							/*free(str);*/
@@ -197,7 +200,7 @@ int main (int argc, char ** argv)
 							args_to_pass[0]= "ls";
 							args_to_pass[1] = "-al";
 							args_to_pass[2] = ".";
-							forkExec(args_to_pass,shellVar,inputType,outputType,inputFile,outputFile);
+							forkExec(args_to_pass,shellVar,inputType,outputType,inputFileStr,outputFileStr);
 						}
 						continue;
 				}
@@ -258,7 +261,7 @@ int main (int argc, char ** argv)
                 arg = args;
 				/*while (*arg) fprintf(stdout,"%s ",*arg++);
 				fputs ("\n", stdout);*/
-				forkExec(args,shellVar,inputType,outputType,inputFile,outputFile);
+				forkExec(args,shellVar,inputType,outputType,inputFileStr,outputFileStr);
 
 					
             }
