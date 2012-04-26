@@ -194,6 +194,7 @@ int main (int argc, char ** argv)
 				/*while (*arg) fprintf(stdout,"%s ",*arg++);
 				fputs ("\n", stdout);*/
 				{
+					int status;
 					pid_t pid;
 					switch (pid = fork()) {
 					case -1:
@@ -201,6 +202,10 @@ int main (int argc, char ** argv)
 					case 0:
 						execvp(args[0],args);
 						syserr("exec");
+						exit(0);
+					default:
+						if (1==1)/*** if  not in the background **/
+							waitpid(pid, &status, WUNTRACED);
 					}
 				}
 
