@@ -17,7 +17,7 @@
 pid_t waitpid(pid_t pid, int *stat_loc, int options);
 extern char **environ;
 void syserr(const char *msg); 
-
+void forkExec(char *args[],char *shellVar,int outputType, char *outputFileStr,int background); 
 
 void syserr(const char * msg)   /* report error code and abort */
 {
@@ -25,7 +25,7 @@ void syserr(const char * msg)   /* report error code and abort */
    abort();
 }
 
-void forkExec(char *args[],char *shellVar,int inputType,int outputType,char * inputFileStr, char *outputFileStr) {
+void forkExec(char *args[],char *shellVar,int outputType, char *outputFileStr,int background) {
 	int status;
 	pid_t pid;
 	switch (pid = fork()) {
@@ -42,7 +42,7 @@ void forkExec(char *args[],char *shellVar,int inputType,int outputType,char * in
 		syserr("exec");
 		exit(0);
 	default:
-		if (1==1)/*** if  not in the background **/
+		if (!background)/*** if  not in the background **/
 			waitpid(pid, &status, WUNTRACED);
 	}
 }
@@ -66,7 +66,7 @@ int main (int argc, char ** argv)
 	char inputFileBuf[MAX_BUFFER];
 
 	/***variables for reading input file **/
-
+	int background; /** trigger for background 1 for & 0 for not **/
 	FILE *commands;
     char buf[MAX_BUFFER];                      /* line buffer */
     char * args[MAX_ARGS];                     /* pointers to arg strings */
@@ -82,8 +82,8 @@ int main (int argc, char ** argv)
 	int k = 0;
 	char * str; /** temp str **/
 	int lengthStr; /** used for echo **/	
-	char *args_to_pass[100];/** 100 arguments is more than enough **/
-	
+	char *args_to_pass[MAX_ARGS];	
+
 	/* keep reading input until "quit" command or eof of redirected input */
 	getcwd(original_path,MAX_BUFFER);
 
@@ -117,6 +117,7 @@ int main (int argc, char ** argv)
 		outputFileStr = NULL;
 		outputFile = stdout;
 		inputFile = commands;
+		background = 0 ;
 
 		/*** resetting var for io ****/
 
@@ -146,7 +147,7 @@ int main (int argc, char ** argv)
             *arg++ = strtok(buf,SEPARATORS);   /* tokenize input */
             while ((*arg++ = strtok(NULL,SEPARATORS)));
 			
-			/****detecting input/output flags etc */
+			/****detecting input/output flags and background etc */
 			i = 0;
 			j = 0;
 			k = 0;
@@ -184,6 +185,11 @@ int main (int argc, char ** argv)
 					i = i + 2;
 					continue;
 				}
+				if (!strcmp(args_temp[i],"&")){/*no need to increment as this will happen as the last computation */
+					background = 1;/**run in background is true */
+					break;
+				}
+
 				args[j] = args_temp[i];
 				j = j + 1;
 				i = i + 1;
@@ -195,15 +201,15 @@ int main (int argc, char ** argv)
 			if (args[0]) {                     /* if there's anything there */
 				/* check for internal/external command */
 				
-	
-
 				/**********help ****************/
 				if (!strcmp(args[0],"help")) {
-					char *command = malloc (strlen("more ") + strlen(original_path) + strlen("/readme") + 1);
-					strcat(command,"more ");
+					char *command = malloc (strlen(original_path) + strlen("/readme") + 1);
 					strcat(command,original_path);
 					strcat(command,"/readme");
-					system(command);
+					args_to_pass[0] = "more";
+					args_to_pass[1] = command;
+					forkExec(args_to_pass,shellVar,outputType,outputFileStr,background);
+					continue;
 				}
 
 				/**********help****************/
@@ -236,12 +242,12 @@ int main (int argc, char ** argv)
 							args_to_pass[0] = "ls";
 							args_to_pass[1] = "-al";
 							args_to_pass[2] = args[1];
-							forkExec(args_to_pass,shellVar,inputType,outputType,inputFileStr,outputFileStr);
+							forkExec(args_to_pass,shellVar,outputType,outputFileStr,background);
 						} else {/* if no directory is selected assume it is current directory */
 							args_to_pass[0]= "ls";
 							args_to_pass[1] = "-al";
 							args_to_pass[2] = ".";
-							forkExec(args_to_pass,shellVar,inputType,outputType,inputFileStr,outputFileStr);
+							forkExec(args_to_pass,shellVar,outputType,outputFileStr,background);
 						}
 						continue;
 				}
@@ -298,11 +304,9 @@ int main (int argc, char ** argv)
 				/**********echo ************/
 
 			
-				/* else pass command onto OS (or in this instance, print them out) */
+				/* else pass command onto OS */
                 arg = args;
-				/*while (*arg) fprintf(stdout,"%s ",*arg++);
-				fputs ("\n", stdout);*/
-				forkExec(args,shellVar,inputType,outputType,inputFileStr,outputFileStr);
+				forkExec(args,shellVar,outputType,outputFileStr,background);
 
 					
             }

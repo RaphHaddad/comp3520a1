@@ -1,7 +1,10 @@
-this is
-a
+README
 
+==BEFORE STARTING SHELL==
+before starting the shell, we must make sure that it is compiled and able to actually run. To do this please type:
+->		make
 
-test README
-
-raphael haddad
+==STARTING THE SHELL==
+after the shell has compiled successfully you can start it as follows
+->		./myshell
+you will then be introduced with a prompt and will be able to execute commands
