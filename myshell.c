@@ -32,9 +32,11 @@ void forkExec(char *args[],char *shellVar,int inputType,int outputType,char * in
 	case -1:
 		syserr("fork");
 	case 0:
-		/*if (outputType = 1) {
-			freopen(
-		}*/
+		if (outputType == 1) {
+			freopen(outputFileStr,"w",stdout); 
+		} else if (outputType ==2 ) {
+			freopen(outputFileStr,"a+",stdout);
+		}
 		setenv("parent",shellVar,1);	
 		execvp(*args,args);
 		syserr("exec");
@@ -48,14 +50,14 @@ void forkExec(char *args[],char *shellVar,int inputType,int outputType,char * in
 
 int main (int argc, char ** argv)
 {
-	int outputType; /** trigger used to tell which output type. 0 for no redirection, > is 1, >> is 2*/
-	int inputType; /** trigger used to tell which input type. 0 for no redirection, < is 1 */
+	int outputType = 0; /** trigger used to tell which output type. 0 for no redirection, > is 1, >> is 2*/
+	int inputType = 0; /** trigger used to tell which input type. 0 for no redirection, < is 1 */
 
 	/*variables for input output files */
-	char *inputFileStr;
-	char *outputFileStr;
-	FILE *outputFile;
-	FILE *inputFile;
+	char *inputFileStr = NULL;
+	char *outputFileStr = NULL;
+	FILE *outputFile = stdout;
+	FILE *inputFile = stdin;
 
     char buf[MAX_BUFFER];                      /* line buffer */
     char * args[MAX_ARGS];                     /* pointers to arg strings */
@@ -90,18 +92,32 @@ int main (int argc, char ** argv)
 
 
     while (!feof(stdin)) { 
+	/*****resetting vars for io*******/
+	outputType = 0; /** trigger used to tell which output type. 0 for no redirection, > is 1, >> is 2*/
+	inputType = 0; /** trigger used to tell which input type. 0 for no redirection, < is 1 */
+	inputFileStr = NULL;
+	outputFileStr = NULL;
+	outputFile = stdout;
+	inputFile = stdin;
+
+	/*** resetting var for io ****/
+
+
+
+
 /* get command line from input */
 		sigset(SIGINT,SIG_IGN);
 
 
-		/**setting the prompt **/
+		/**setting the prompt str **/
 		getcwd(path_prompt,MAX_BUFFER);
 		end_prompt = " ==> ";
 		prompt = malloc( strlen(path_prompt) + strlen(end_prompt) + 1 );
 		strcat(prompt,path_prompt);
 		strcat(prompt,end_prompt);
 		fprintf(stdout,"%s",prompt); 
-        
+		/**setting prompt str **/
+
         
         /*free(prompt);*/
         if (fgets (buf, MAX_BUFFER, stdin )) { /* read a line*/
@@ -111,7 +127,6 @@ int main (int argc, char ** argv)
             while ((*arg++ = strtok(NULL,SEPARATORS)));
 			
 			/****detecting input/output flags etc */
-			outputFile = stdout;
 			i = 0;
 			j = 0;
 			while (args_temp[i]) {
@@ -141,8 +156,10 @@ int main (int argc, char ** argv)
 				j = j + 1;
 				i = i + 1;
 			}
-				args[j] = NULL;
-            /* last entry will be NULL */									
+				args[j] = NULL;/*last entry must be NULL */
+			/***************************************/
+
+
 			if (args[0]) {                     /* if there's anything there */
 				/* check for internal/external command */
 				
@@ -184,18 +201,10 @@ int main (int argc, char ** argv)
                	/*********DIR ***************/
                 if (!strcmp(args[0],"dir")){/*TODO: implment dir */
 						if (args[1]) {/*if something after dir*/
-							/*char *str;
-							char *ls = "ls -al ";
-							str = malloc(strlen(ls) + strlen(args[1])+1);
-							strcat(str,ls);
-							strcat(str,args[1]);*/
 							args_to_pass[0] = "ls";
 							args_to_pass[1] = "-al";
 							args_to_pass[2] = args[1];
 							forkExec(args_to_pass,shellVar,inputType,outputType,inputFileStr,outputFileStr);
-							str = "";	
-							/*system(str);*/
-							/*free(str);*/
 						} else {/* if no directory is selected assume it is current directory */
 							args_to_pass[0]= "ls";
 							args_to_pass[1] = "-al";
