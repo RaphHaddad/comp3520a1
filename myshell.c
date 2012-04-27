@@ -301,7 +301,7 @@ int main (int argc, char ** argv)
 						}
 						str = malloc(lengthStr);
 						i = 1; /* reseting counter to actually concat to variable str */
-						while (args[i]){/*the reason the new counter has to be less than i-1 is because the last arg is all args contatinated */
+						while (args[i]){
 							strcat(str,args[i]);
 							strcat(str," ");
 							i = i +1;
