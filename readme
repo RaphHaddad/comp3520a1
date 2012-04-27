@@ -1,12 +1,15 @@
 README
 
-==BEFORE STARTING SHELL==
-before starting the shell, we must make sure that it is compiled and able to actually run. To do this please type:
-->		make
 
 ==STARTING THE SHELL==
-after the shell has compiled successfully you can start it as follows
+if you start the shell this way, you will be welcomed with a prompt that will allow you to enter commands:
+
 ->		./myshell
+
+alternatively if you have a batchfile filled with commands you can do this:
+
+->		./myshell batchfile
+
 
 The shell supports the following internal commands:
 	cd <directory> - change the current default directory to <directory>. If the <directory> argument is not present, report the current directory. If the directory does not exist an appropriate error should be reported. This command should also change the PWD environment variable.
