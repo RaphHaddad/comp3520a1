@@ -52,6 +52,7 @@ int main (int argc, char ** argv)
 {
 	int outputType = 0; /** trigger used to tell which output type. 0 for no redirection, > is 1, >> is 2*/
 	int inputType = 0; /** trigger used to tell which input type. 0 for no redirection, < is 1 */
+	int batchFile = 0;/**trigger for batch file **/
 
 	/*variables for input output files */
 	char *inputFileStr = NULL;
@@ -88,8 +89,10 @@ int main (int argc, char ** argv)
 
 	/************stdin or batchfile ***********************/
 	commands = stdin;
-	if (argc == 2)
-		printf("---->%s<-----",*(argv+1));
+	if (argc == 2) {
+		batchFile = 1;
+		commands = fopen(*(argv+1),"r");
+	}
 	
 
 	/************stdin or batchfile ***********************/
