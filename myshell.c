@@ -128,12 +128,14 @@ int main (int argc, char ** argv)
 
 
 		/**setting the prompt str **/
-		getcwd(path_prompt,MAX_BUFFER);
-		end_prompt = " ==> ";
-		prompt = malloc( strlen(path_prompt) + strlen(end_prompt) + 1 );
-		strcat(prompt,path_prompt);
-		strcat(prompt,end_prompt);
-		fprintf(stdout,"%s",prompt); 
+		if (!batchFile) {/*only show if there is a batchFile being used */
+			getcwd(path_prompt,MAX_BUFFER);
+			end_prompt = " ==> ";
+			prompt = malloc( strlen(path_prompt) + strlen(end_prompt) + 1 );
+			strcat(prompt,path_prompt);
+			strcat(prompt,end_prompt);
+			fprintf(stdout,"%s",prompt); 
+		}
 		/**setting prompt str **/
 
         
