@@ -59,6 +59,14 @@ int main (int argc, char ** argv)
 	FILE *outputFile = stdout;
 	FILE *inputFile = stdin;
 
+	/***variables for reading input file ***/
+	char **inputFileArg;
+	char * inputFileArgs[MAX_ARGS];
+	char inputFileBuf[MAX_BUFFER];
+
+	/***variables for reading input file **/
+
+	FILE *commands;
     char buf[MAX_BUFFER];                      /* line buffer */
     char * args[MAX_ARGS];                     /* pointers to arg strings */
     char *args_temp[MAX_ARGS];					/* used as above to remove < >> and associated files */
@@ -70,6 +78,7 @@ int main (int argc, char ** argv)
 	const char *end_prompt;/**variabel to store ==> at end of directly for prompt **/
 	int i = 0;/** counter for input output setting */
 	int j = 0;
+	int k = 0;
 	char * str; /** temp str **/
 	int lengthStr; /** used for echo **/	
 	char *args_to_pass[100];/** 100 arguments is more than enough **/
@@ -77,7 +86,13 @@ int main (int argc, char ** argv)
 	/* keep reading input until "quit" command or eof of redirected input */
 	getcwd(original_path,MAX_BUFFER);
 
+	/************stdin or batchfile ***********************/
+	commands = stdin;
+	if (argc == 2)
+		printf("---->%s<-----",*(argv+1));
+	
 
+	/************stdin or batchfile ***********************/
 
 
 	/******setting environment for shell variable *******/
@@ -91,14 +106,14 @@ int main (int argc, char ** argv)
 	/*****setting environment for shell variable *******/
 
 
-    while (!feof(stdin)) { 
+    while (!feof(commands)) { 
 	/*****resetting vars for io*******/
 	outputType = 0; /** trigger used to tell which output type. 0 for no redirection, > is 1, >> is 2*/
 	inputType = 0; /** trigger used to tell which input type. 0 for no redirection, < is 1 */
 	inputFileStr = NULL;
 	outputFileStr = NULL;
 	outputFile = stdout;
-	inputFile = stdin;
+	inputFile = commands;
 
 	/*** resetting var for io ****/
 
@@ -120,7 +135,7 @@ int main (int argc, char ** argv)
 
         
         /*free(prompt);*/
-        if (fgets (buf, MAX_BUFFER, stdin )) { /* read a line*/
+        if (fgets (buf, MAX_BUFFER, commands )) { /* read a line*/
 		/* tokenize the input into args array */
             arg = args_temp;
             *arg++ = strtok(buf,SEPARATORS);   /* tokenize input */
@@ -129,12 +144,24 @@ int main (int argc, char ** argv)
 			/****detecting input/output flags etc */
 			i = 0;
 			j = 0;
+			k = 0;
 			while (args_temp[i]) {
 				if (!strcmp(args_temp[i],"<")){
 					inputType = 1;
 					inputFileStr = args_temp[i + 1];
+					inputFile = fopen(inputFileStr,"r");/**may have to check if exist **/
+					if (fgets (inputFileBuf, MAX_BUFFER,inputFile)) {/**adding everything to the normal arg list as if it was a normal feed */
+						inputFileArg = inputFileArgs;
+						*inputFileArg++ = strtok(inputFileBuf,SEPARATORS);
+						while ((*inputFileArg++ = strtok(NULL,SEPARATORS)));
+						while (inputFileArgs[k]){
+							args[j] = inputFileArgs[k];
+							j = j + 1;
+							k = k + 1;
+						}
+					}
 					i = i + 2;
-					break;
+					continue;
 				}
 
 				if (!strcmp(args_temp[i],">")){
@@ -142,7 +169,7 @@ int main (int argc, char ** argv)
 					outputFileStr = args_temp[i + 1];
 					outputFile = fopen(outputFileStr,"w");
 					i = i + 2;
-					break;
+					continue;
 				}
 
 				if (!strcmp(args_temp[i],">>")){
@@ -150,7 +177,7 @@ int main (int argc, char ** argv)
 					outputFileStr = args_temp[i + 1];
 					outputFile = fopen(outputFileStr,"a+");
 					i = i + 2;
-					break;
+					continue;
 				}
 				args[j] = args_temp[i];
 				j = j + 1;
