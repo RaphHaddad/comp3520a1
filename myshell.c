@@ -91,6 +91,10 @@ int main (int argc, char ** argv)
 	commands = stdin;
 	if (argc == 2) {
 		batchFile = 1;
+		if (access(*(argv+1),R_OK) != 0) {/*if access is not successfull*/
+			printf("File Read Error\n");
+			exit(0);
+		}
 		commands = fopen(*(argv+1),"r");
 	}
 	
@@ -155,6 +159,10 @@ int main (int argc, char ** argv)
 				if (!strcmp(args_temp[i],"<")){
 					inputType = 1;
 					inputFileStr = args_temp[i + 1];
+					if (access(inputFileStr,R_OK) != 0) {/*if access is not successfull*/
+						printf("File Read Error\n");
+						exit(0);
+					}
 					inputFile = fopen(inputFileStr,"r");/**may have to check if exist **/
 					if (fgets (inputFileBuf, MAX_BUFFER,inputFile)) {/**adding everything to the normal arg list as if it was a normal feed */
 						inputFileArg = inputFileArgs;
@@ -165,7 +173,7 @@ int main (int argc, char ** argv)
 							j = j + 1;
 							k = k + 1;
 						}
-					}
+					} 
 					i = i + 2;
 					continue;
 				}
