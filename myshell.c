@@ -107,20 +107,20 @@ int main (int argc, char ** argv)
 
 
     while (!feof(commands)) { 
-	/*****resetting vars for io*******/
-	outputType = 0; /** trigger used to tell which output type. 0 for no redirection, > is 1, >> is 2*/
-	inputType = 0; /** trigger used to tell which input type. 0 for no redirection, < is 1 */
-	inputFileStr = NULL;
-	outputFileStr = NULL;
-	outputFile = stdout;
-	inputFile = commands;
+		/*****resetting vars for io*******/
+		outputType = 0; /** trigger used to tell which output type. 0 for no redirection, > is 1, >> is 2*/
+		inputType = 0; /** trigger used to tell which input type. 0 for no redirection, < is 1 */
+		inputFileStr = NULL;
+		outputFileStr = NULL;
+		outputFile = stdout;
+		inputFile = commands;
 
-	/*** resetting var for io ****/
-
-
+		/*** resetting var for io ****/
 
 
-/* get command line from input */
+
+
+		/* get command line from input */
 		sigset(SIGINT,SIG_IGN);
 
 
