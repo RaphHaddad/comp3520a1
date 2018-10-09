@@ -1,7 +1,7 @@
-README
+# NOTE:
+this is an OOOLD uni assignment. Please forgive the code.
 
-
-==STARTING THE SHELL==
+# STARTING THE SHELL
 if you start the shell this way, you will be welcomed with a prompt that will allow you to enter commands:
 
 ->		./myshell
@@ -22,10 +22,10 @@ The shell supports the following internal commands:
 	quit - quit the shell
 
 
-==HOW TO USE==
+# HOW TO USE
 to use the program just type a command and press enter.
 
-==IO REDIRECTION==
+# IO REDIRECTION
 IO redirection is a technque built into a shell that allows raw data on a file to be used as input or output. For example executing a program such as 
 
 ->		ls < input
@@ -46,12 +46,12 @@ Finally, inputing and outputting redirection can be used together
 
 ->		ls < input > output
 
-==ENVIRONMENT==
+# ENVIRONMENT
 The environment contains variables that are required by an operating system. This includes data about users, the working directory and the system itself. These are important as they can define the state of a system at any point in time.
 
 Some common environment variables include: TERM (the terminal being used), PWD (current location), HOME (home directory of user), SHELL (the shell being used) and LANG (  the language being used).
 
-==BACKGROUND EXECUTION==
+# BACKGROUND EXECUTION
 Background execution differs from normal execution as it does not wait for a previous process to finish. When the '&' flag is used for a command for example
 
 ->		ls . &
